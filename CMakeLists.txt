@@ -57,7 +57,7 @@ elseif (USE_COMPILER STREQUAL "LLVM")
 endif ()
 
 # 创建可执行文件
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp)
 
 # 设置链接器标志（根据需要调整）
 set(CMAKE_EXE_LINKER_FLAGS "-static")
@@ -77,6 +77,3 @@ elseif (USE_COMPILER STREQUAL "LLVM")
             BASE_DIRS ${LLVM_PATH}/share/libc++/v1
             FILES ${LLVM_PATH}/share/libc++/v1/std.cppm ${LLVM_PATH}/share/libc++/v1/std.compat.cppm)
 endif ()
-
-find_package(unofficial-sqlite3 CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE unofficial::sqlite3::sqlite3)
