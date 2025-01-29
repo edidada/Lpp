@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.30)
 
 # 项目名设置为变量
-set(PROJECT_NAME "Lpp")
+set(PROJECT_NAME "LppTemplet")
 
 # 设置项目语言
 project(${PROJECT_NAME} LANGUAGES CXX)
@@ -56,24 +56,47 @@ elseif (USE_COMPILER STREQUAL "LLVM")
     endif ()
 endif ()
 
-# 创建可执行文件
-add_executable(${PROJECT_NAME} src/main.cpp)
-
 # 设置链接器标志（根据需要调整）
 set(CMAKE_EXE_LINKER_FLAGS "-static")
 
+set(MODULE_FILES "")
+
+# 自动查找 `src/` 目录下的所有 `.mpp` 模块文件
+file(GLOB_RECURSE FOUND_MPP_FILES "${CMAKE_SOURCE_DIR}/src/*.mpp")
+
+# 如果找到 `.mpp` 文件，则添加到 `MODULE_FILES`
+if (FOUND_MPP_FILES)
+    list(APPEND MODULE_FILES ${FOUND_MPP_FILES})
+endif ()
+
 # 为目标添加 C++ 模块的源文件
 if (USE_COMPILER STREQUAL "MSVC")
-    target_sources(${PROJECT_NAME}
-            PRIVATE
-            FILE_SET CXX_MODULES
-            BASE_DIRS ${MSVC_MODULE_PATH}
-            FILES ${MSVC_MODULE_PATH}/std.ixx
-            ${MSVC_MODULE_PATH}/std.compat.ixx)
+    set(MODULE_PATH ${MSVC_MODULE_PATH})
+
+    list(APPEND MODULE_FILES
+            ${MSVC_MODULE_PATH}/std.ixx
+            ${MSVC_MODULE_PATH}/std.compat.ixx
+    )
 elseif (USE_COMPILER STREQUAL "LLVM")
+    set(MODULE_PATH ${LLVM_PATH}/share/libc++/v1)
+
+    list(APPEND MODULE_FILES
+            ${LLVM_PATH}/share/libc++/v1/std.cppm
+            ${LLVM_PATH}/share/libc++/v1/std.compat.cppm
+    )
+endif ()
+
+# 自动查找 `src/` 目录下的所有 `.cpp` 文件
+file(GLOB_RECURSE SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
+# 创建可执行文件
+add_executable(${PROJECT_NAME} ${SRC_FILES})
+
+# 仅在 MODULE_FILES 非空时添加 FILE_SET
+if (MODULE_FILES)
     target_sources(${PROJECT_NAME}
             PRIVATE
             FILE_SET CXX_MODULES
-            BASE_DIRS ${LLVM_PATH}/share/libc++/v1
-            FILES ${LLVM_PATH}/share/libc++/v1/std.cppm ${LLVM_PATH}/share/libc++/v1/std.compat.cppm)
+            BASE_DIRS ${MODULE_PATH} "${CMAKE_SOURCE_DIR}/src"
+            FILES ${MODULE_FILES}
+    )
 endif ()
