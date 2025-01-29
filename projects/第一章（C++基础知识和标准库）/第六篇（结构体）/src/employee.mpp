@@ -1,0 +1,16 @@
+ // 声明并导出 'employee' 模块
+export module employee;
+
+
+// 定义一个 'Employee' 结构体，用于存储员工数据
+// 将 Employee 结构体声明为一个导出的实体，使其可以在其他模块中被使用。
+export struct Employee {
+    // 员工的名字首字母
+    char firstInitial;
+    // 员工的姓氏首字母
+    char lastInitial;
+    // 员工的唯一编号
+    int employeeNumber;
+    // 员工的工资
+    int salary;
+};
