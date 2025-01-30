@@ -31,10 +31,7 @@ if (USE_COMPILER STREQUAL "MSVC")
         # setx MSVC_PATH D:\Devs\VisualStudio\2022\Community\VC\Tools\MSVC\14.42.34433
         message(FATAL_ERROR "MSVC 环境变量未设置，需要和实际安装目录一致。Windows例：setx MSVC_PATH <你的安装路径>")
     endif ()
-
     include_directories("${MSVC_PATH}/include")
-
-    set(CMAKE_CXX_COMPILER "${MSVC_PATH}/bin/Hostx64/x64/cl.exe")
     set(MSVC_MODULE_PATH "${MSVC_PATH}/modules")
     message(STATUS "Windows 使用 MSVC 编译器")
 elseif (USE_COMPILER STREQUAL "LLVM")
@@ -46,12 +43,8 @@ elseif (USE_COMPILER STREQUAL "LLVM")
         message(FATAL_ERROR "LLVM_PATH 环境变量未设置，需要和实际安装目录一致。\nWindows例：setx LLVM_PATH <你的安装路径>\nLinux例：export LLVM_PATH=<你的安装路径>")
     endif ()
     if (WIN32)
-        # Windows 上使用 clang++.exe
-        set(CMAKE_CXX_COMPILER "${LLVM_PATH}/bin/clang++.exe")
         message(STATUS "Windows 使用 LLVM 编译器")
     elseif (UNIX)
-        # Linux 上使用 clang++
-        set(CMAKE_CXX_COMPILER "${LLVM_PATH}/bin/clang++")
         message(STATUS "Linux 使用 LLVM 编译器")
     endif ()
 endif ()
@@ -62,7 +55,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static")
 set(MODULE_FILES "")
 
 # 自动查找 `src/` 目录下的所有 `.mpp` 模块文件
-file(GLOB_RECURSE FOUND_MPP_FILES "${CMAKE_SOURCE_DIR}/src/*.mpp")
+file(GLOB_RECURSE FOUND_MPP_FILES "${CMAKE_SOURCE_DIR}/modules/*.mpp")
 
 # 如果找到 `.mpp` 文件，则添加到 `MODULE_FILES`
 if (FOUND_MPP_FILES)
@@ -96,7 +89,7 @@ if (MODULE_FILES)
     target_sources(${PROJECT_NAME}
             PRIVATE
             FILE_SET CXX_MODULES
-            BASE_DIRS ${MODULE_PATH} "${CMAKE_SOURCE_DIR}/src"
+            BASE_DIRS ${MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules"
             FILES ${MODULE_FILES}
     )
 endif ()
