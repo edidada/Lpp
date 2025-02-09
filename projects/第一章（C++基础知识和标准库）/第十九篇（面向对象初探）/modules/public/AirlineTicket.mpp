@@ -1,0 +1,46 @@
+export module airline_ticket;
+
+// 导入标准库
+import std;
+
+// 导出 AirlineTicket 类
+export class AirlineTicket
+{
+public:
+    // 构造函数声明
+    // AirlineTicket();
+
+    // 析构函数声明
+    // ~AirlineTicket();
+
+    // 计算机票价格的函数声明
+    double calculatePriceInDollars();
+
+    // 获取乘客姓名的函数声明
+    std::string getPassengerName();
+
+    // 设置乘客姓名的函数声明
+    void setPassengerName(std::string name);
+
+    // 获取里程数的函数声明
+    int getNumberOfMiles();
+
+    // 设置里程数的函数声明
+    void setNumberOfMiles(int miles);
+
+    // 检查是否具有精英超级奖励状态的函数声明
+    bool hasEliteSuperRewardsStatus();
+
+    // 设置精英超级奖励状态的函数声明
+    void setHasEliteSuperRewardsStatus(bool status);
+
+private:
+    // 乘客姓名，初始化为 "Unknown Passenger"
+    std::string m_passengerName{ "Unknown Passenger" };
+
+    // 里程数，初始化为 0
+    int m_numberOfMiles{ 0 };
+
+    // 精英超级奖励状态，初始化为 false
+    bool m_hasEliteSuperRewardsStatus{ false };
+};
