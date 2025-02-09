@@ -54,12 +54,15 @@ set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 set(MODULE_FILES "")
 
-# 自动查找 `src/` 目录下的所有 `.mpp` 模块文件
-file(GLOB_RECURSE FOUND_MPP_FILES "${CMAKE_SOURCE_DIR}/modules/*.mpp")
+# 自动查找 `modules/public/` 目录下的所有模块接口文件
+file(GLOB_RECURSE PUBLIC_MODULE_FILES "${CMAKE_SOURCE_DIR}/modules/public/*.mpp")
+
+# 自动查找 `modules/private/` 目录下的所有模块实现文件
+file(GLOB_RECURSE PRIVATE_MODULE_FILES "${CMAKE_SOURCE_DIR}/modules/private/*.cpp")
 
 # 如果找到 `.mpp` 文件，则添加到 `MODULE_FILES`
-if (FOUND_MPP_FILES)
-    list(APPEND MODULE_FILES ${FOUND_MPP_FILES})
+if (PUBLIC_MODULE_FILES)
+    list(APPEND MODULE_FILES ${PUBLIC_MODULE_FILES})
 endif ()
 
 # 为目标添加 C++ 模块的源文件
@@ -81,15 +84,16 @@ endif ()
 
 # 自动查找 `src/` 目录下的所有 `.cpp` 文件
 file(GLOB_RECURSE SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
+
 # 创建可执行文件
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${PRIVATE_MODULE_FILES})
 
 # 仅在 MODULE_FILES 非空时添加 FILE_SET
 if (MODULE_FILES)
     target_sources(${PROJECT_NAME}
             PRIVATE
             FILE_SET CXX_MODULES
-            BASE_DIRS ${MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules"
+            BASE_DIRS ${MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/public"
             FILES ${MODULE_FILES}
     )
 endif ()
